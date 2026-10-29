@@ -1,0 +1,1505 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Tryout TKAD by Ilham Adi Saputra</title>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-dark: #0f172a;
+            --accent: #2563eb;
+            --accent-hover: #1d4ed8;
+            --success: #16a34a;
+            --warning: #d97706;
+            --danger: #dc2626;
+            --bg-light: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #cbd5e1;
+            --font-size-base: 1rem;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            font-size: var(--font-size-base);
+            touch-action: manipulation;
+        }
+
+        /* Modal Login Awal */
+        .login-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 300;
+            padding: 16px;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 420px;
+            width: 100%;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.25);
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .login-header h2 {
+            color: var(--primary);
+            font-size: 1.3rem;
+            margin-bottom: 6px;
+        }
+
+        .login-header p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+            color: var(--text-main);
+        }
+
+        /* Font Size 16px Mencegah Safari iOS Auto-Zoom */
+        .form-control {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.2s;
+            background-color: #ffffff;
+            color: #0f172a;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+        /* Header Utama */
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .header-title-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-title {
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 0.2px;
+        }
+
+        .font-sizer {
+            display: flex;
+            gap: 4px;
+            background: rgba(255,255,255,0.15);
+            padding: 2px 4px;
+            border-radius: 6px;
+        }
+
+        .btn-size {
+            background: transparent;
+            border: none;
+            color: white;
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            min-height: 32px;
+        }
+
+        .btn-size:hover, .btn-size.active {
+            background: white;
+            color: var(--primary);
+        }
+
+        .timer-box {
+            background: #ffffff;
+            color: var(--primary-dark);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-weight: 800;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.08);
+            white-space: nowrap;
+        }
+
+        .timer-box.warning {
+            background-color: #fef08a;
+            color: #854d0e;
+        }
+
+        .timer-box.danger {
+            background-color: #fecaca;
+            color: #991b1b;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
+
+        /* Layout Container */
+        .container {
+            display: flex;
+            flex: 1;
+            padding: 16px;
+            gap: 16px;
+            max-width: 1440px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Panel Utama Soal */
+        .main-panel {
+            flex: 3;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            min-width: 0;
+        }
+
+        .passage-box {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 18px;
+            border: 1px solid var(--border-color);
+            max-height: 280px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+            line-height: 1.6;
+        }
+
+        .passage-title {
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 10px;
+            color: var(--primary);
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 6px;
+        }
+
+        .passage-text {
+            white-space: pre-line;
+            color: #334155;
+            font-size: 0.95rem;
+        }
+
+        .question-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 18px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .question-number {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .question-type-badge {
+            font-size: 0.75rem;
+            background-color: #e0e7ff;
+            color: var(--primary);
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+
+        .question-text {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 16px;
+            white-space: pre-line;
+            font-weight: 500;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 12px 14px;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: white;
+            min-height: 48px;
+        }
+
+        .option-item:hover {
+            border-color: var(--accent);
+            background-color: #eff6ff;
+        }
+
+        .option-item.selected {
+            border-color: var(--accent);
+            background-color: #dbeafe;
+            font-weight: 600;
+        }
+
+        .option-item input {
+            margin-top: 3px;
+            margin-right: 12px;
+            transform: scale(1.3);
+            cursor: pointer;
+        }
+
+        .option-label {
+            flex: 1;
+            line-height: 1.4;
+            font-size: 0.9rem;
+        }
+
+        /* Bottom Action Bar */
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-size: 0.9rem;
+            min-height: 44px;
+            touch-action: manipulation;
+        }
+
+        .btn-secondary { background-color: #64748b; color: white; }
+        .btn-warning { background-color: var(--warning); color: white; }
+        .btn-primary { background-color: var(--accent); color: white; }
+        .btn-success { background-color: var(--success); color: white; }
+
+        /* Sidebar Navigation Grid */
+        .sidebar {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            min-width: 280px;
+        }
+
+        .user-card, .grid-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 0.88rem;
+        }
+
+        .user-info div {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px dashed #e2e8f0;
+            padding-bottom: 4px;
+        }
+
+        .user-info span {
+            color: var(--text-muted);
+        }
+
+        .grid-header {
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--primary-dark);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.95rem;
+        }
+
+        .question-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .grid-item {
+            aspect-ratio: 1;
+            min-height: 44px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border: 2px solid var(--border-color);
+            background-color: white;
+            color: var(--text-main);
+            transition: all 0.2s;
+        }
+
+        .grid-item.active {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+        }
+
+        .grid-item.answered {
+            background-color: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+
+        .grid-item.flagged {
+            background-color: var(--warning);
+            color: white;
+            border-color: var(--warning);
+        }
+
+        .legend {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 16px;
+            font-size: 0.8rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-color {
+            width: 14px;
+            height: 14px;
+            border-radius: 3px;
+        }
+
+        /* Modal Result & Pembahasan */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+            padding: 16px;
+            overflow-y: auto;
+        }
+
+        .modal-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 850px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2);
+        }
+
+        .score-circle {
+            width: 110px;
+            height: 110px;
+            border-radius: 55px;
+            background: #dbeafe;
+            color: var(--accent);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.4rem;
+            font-weight: 800;
+            margin: 16px auto;
+            border: 4px solid var(--accent);
+        }
+
+        .review-section {
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .review-item {
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 14px;
+            background: #f8fafc;
+        }
+
+        .review-item.correct { border-left: 6px solid var(--success); }
+        .review-item.incorrect { border-left: 6px solid var(--danger); }
+
+        .explanation-box {
+            margin-top: 8px;
+            background-color: #eff6ff;
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 0.88rem;
+            color: #1e3a8a;
+            line-height: 1.5;
+        }
+
+        .status-tag {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.75rem;
+            margin-left: 6px;
+        }
+        .status-tag.correct { background-color: #dcfce7; color: #15803d; }
+        .status-tag.incorrect { background-color: #fee2e2; color: #b91c1c; }
+
+        /* Media Queries untuk Tablet & HP */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                padding: 12px;
+                gap: 12px;
+            }
+            .sidebar {
+                order: -1;
+                width: 100%;
+                min-width: 100%;
+            }
+            .question-grid {
+                grid-template-columns: repeat(6, 1fr);
+            }
+            .action-bar {
+                padding: 10px;
+            }
+            .btn {
+                padding: 8px 12px;
+                font-size: 0.85rem;
+            }
+            .header-title {
+                font-size: 0.9rem;
+            }
+            .timer-box {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Modal Form Login Identitas Peserta -->
+    <div class="login-overlay" id="login-modal">
+        <div class="login-card">
+            <div class="login-header">
+                <h2>Tryout TKAD by Ilham Adi Saputra</h2>
+                <p>Silakan masukkan nama dan asal sekolah Anda untuk memulai ujian.</p>
+            </div>
+            <form id="login-form" onsubmit="startExamWithCredentials(event)">
+                <div class="form-group">
+                    <label for="user-fullname">Nama Lengkap</label>
+                    <input type="text" id="user-fullname" class="form-control" placeholder="Masukkan Nama Lengkap Anda" required autocomplete="name">
+                </div>
+                <div class="form-group">
+                    <label for="user-school">Asal Sekolah</label>
+                    <input type="text" id="user-school" class="form-control" placeholder="Masukkan Asal Sekolah Anda" required autocomplete="organization">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 12px; margin-top: 8px;">Mulai Ujian</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Header Utama -->
+    <header>
+        <div class="header-title-box">
+            <div class="header-title">Tryout TKAD by Ilham Adi Saputra</div>
+            <div class="font-sizer">
+                <button class="btn-size" onclick="setFontSize('0.9rem')">A-</button>
+                <button class="btn-size active" onclick="setFontSize('1rem')">A</button>
+                <button class="btn-size" onclick="setFontSize('1.1rem')">A+</button>
+            </div>
+        </div>
+        <div class="timer-box" id="timer-box">
+            Waktu Tersisa: <span id="timer-display">00:45:00</span>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Panel Utama Soal -->
+        <div class="main-panel">
+            <div class="passage-box" id="passage-box">
+                <div class="passage-title" id="passage-title">Teks Bacaan</div>
+                <div class="passage-text" id="passage-content">Memuat teks bacaan...</div>
+            </div>
+
+            <div class="question-card">
+                <div class="question-number">
+                    <span id="question-number-text">Soal Nomor 1</span>
+                    <span class="question-type-badge" id="question-type-badge">Pilihan Ganda</span>
+                </div>
+                <div class="question-text" id="question-text">Memuat pertanyaan...</div>
+                <div class="options-list" id="options-container">
+                    <!-- Opsi Jawaban -->
+                </div>
+            </div>
+
+            <div class="action-bar">
+                <button class="btn btn-secondary" id="btn-prev" onclick="prevQuestion()">Sebelumnya</button>
+                <button class="btn btn-warning" id="btn-flag" onclick="toggleFlag()">Ragu-Ragu</button>
+                <button class="btn btn-primary" id="btn-next" onclick="nextQuestion()">Selanjutnya</button>
+            </div>
+        </div>
+
+        <!-- Sidebar Informasi & Navigasi -->
+        <div class="sidebar">
+            <div class="user-card">
+                <div class="user-info">
+                    <div><span>Program:</span> <strong>Tryout TKAD by Ilham Adi Saputra</strong></div>
+                    <div><span>Nama Peserta:</span> <strong id="display-fullname">-</strong></div>
+                    <div><span>Asal Sekolah:</span> <strong id="display-school">-</strong></div>
+                    <div><span>Materi Uji:</span> <strong>Bahasa Inggris Wajib</strong></div>
+                    <div><span>Jumlah Soal:</span> <strong>30 Soal</strong></div>
+                </div>
+            </div>
+
+            <div class="grid-card">
+                <div class="grid-header">
+                    <span>Navigasi Soal</span>
+                    <span style="font-size: 0.85rem; color: var(--text-muted);" id="answered-count-badge">0/30</span>
+                </div>
+                
+                <div class="question-grid" id="question-grid">
+                    <!-- Navigasi Kisi Soal -->
+                </div>
+
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: var(--success);"></div>
+                        <span>Sudah Dijawab</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: var(--warning);"></div>
+                        <span>Ragu-Ragu</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: white; border: 1px solid var(--border-color);"></div>
+                        <span>Belum Dijawab</span>
+                    </div>
+                </div>
+
+                <!-- Tombol Selesai Ujian -->
+                <button class="btn btn-success" id="btn-submit" style="width: 100%; justify-content: center; padding: 12px; font-size: 1rem;" onclick="confirmSubmit()">Selesai Ujian</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Hasil Ujian & Pembahasan -->
+    <div class="modal-overlay" id="result-modal">
+        <div class="modal-card">
+            <h2>Hasil Ujian & Pembahasan Lengkap</h2>
+            <p style="color: var(--text-muted); margin-top: 4px; font-size: 0.9rem;">Ringkasan skor dan analisis pembahasan 30 soal Paket 1:</p>
+            
+            <div class="score-circle" id="final-score">0</div>
+            
+            <div style="display: flex; justify-content: space-around; background: #f1f5f9; padding: 12px; border-radius: 10px; margin-bottom: 16px; font-weight: 600; flex-wrap: wrap; gap: 8px; font-size: 0.88rem;">
+                <div>Nama: <span id="result-fullname" style="color: var(--primary);">-</span></div>
+                <div>Sekolah: <span id="result-school" style="color: var(--primary);">-</span></div>
+                <div>Benar: <span id="correct-count" style="color: var(--success);">0</span> / 30</div>
+                <div>Salah: <span id="incorrect-count" style="color: var(--danger);">0</span> / 30</div>
+                <div>Waktu: <span id="time-used">00:00:00</span></div>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-bottom: 16px;">
+                <button class="btn btn-primary" style="flex: 1; justify-content: center;" onclick="downloadSpreadsheetCSV()">Unduh Hasil Spreadsheet (CSV)</button>
+            </div>
+
+            <div class="review-section" id="review-container">
+                <!-- Pembahasan 30 Soal -->
+            </div>
+
+            <button class="btn btn-secondary" style="width: 100%; justify-content: center; margin-top: 16px; padding: 12px;" onclick="resetExam()">Ulangi Ujian</button>
+        </div>
+    </div>
+
+    <script>
+        // GOOGLE APPS SCRIPT WEB APP ENDPOINT UNTUK OTOMATIS PENYIMPANAN SPREADSHEET
+        const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyK81ohs3Dlq6GPGqyCn1YVwG-Sc7kVWqokdV56yf28LlzVPdb1xHNNZR7UXXUlsdK_/exec";
+
+        // MASTER TEKS BACAAN UTUH (FULL PASSAGES)
+        const PASSAGE_MAHAKIYA = `The Legend of Mahakiya\n\nA long time ago, there was a young girl named Maria. She was dearly loved by her parents loved and people around her. However, Maria was a very shy girl. Talking to people made her feel uncomfortable. She would rather stay at home or spend time in her garden to avoid being seen or being in a crowd.\n\n"Maria, dear, why don't you greet our neighbors?" her mother Aling Iska would gently encourage her. Maria would just look down, blush deeply, and reply, "I feel safe here with my flowers, Mother. They never judge my silence."\n\nOne unfortunate afternoon, a violent band of bandits suddenly raided the village. They moved from house to house, plundering valuables and destroying property. Hearing the distant screams, Maria’s father, Mang Dondong ran inside, shouting, "Bandits are coming! We must hide Maria!"\n\nFearing for their daughter's safety, the terrified parents quickly took Maria into the dense bushes of her beloved garden before running back to protect their home. “My God please, please keep our daughter safe. Keep her hidden from those bandits!” Maria’s mother solemnly prayed in her hiding spot.\n\nWhen the bandits broke into the house, they struck the couple, knocking them unconscious. The bandits searched the property for hours but found no trace of the young girl. Frustrated, they eventually gathered their loot and fled.\n\nWhen the parents regained consciousness, they immediately rushed to the garden, crying out, "Maria! Where are you?" However, Maria was nowhere to be found. Instead, they noticed a unique, low-growing plant in the exact spot where they had hidden her. When Mang Dondong gently brushed against its tiny green leaves, they immediately folded inward, shrinking away in deep modesty.\n\nGod had transformed their shy daughter into a plant in her beloved garden to save her from the bandits. The couple couldn’t help but cry and every tear they shed on the strange plant becomes a small, round, rosy colored flower. They named the plant "Makahiya", “the Shy one”, and nurtured it with absolute care.`;
+
+        const PASSAGE_TRIP = `How to Plan and Save for a Budget-Friendly Trip\n\nTraveling can be a great way for young people to take a break from their busy routines and to experience new places. However, enjoyable trip might be too expensive for most of them. With careful planning and regular saving, you can prepare for a vacation that does not cost too much money. The following steps help you plan a trip that fits your budget.\n\n1. Set a Travel Goal\nFirst, decide where you want to go, how long you will stay, and what you want to do there. A clear goal makes it easier to estimate how much money you need. For example, a three-day trip to a nearby city will usually cost less than a week-long international trip.\n\n2. Make a Budget Plan\nNext, list the main expenses you expect, including transportation, accommodation, food, entrance fees, and activities. For example, if you plan to visit several attractions, check their entrance fees before deciding how much money to prepare. A detailed budget helps you avoid unnecessary spending.\n\n3. Prepare an Emergency Fund\nSet aside extra money for unexpected situations. A delayed trip, lost belongings, or an urgent need may require additional expenses. Keeping about 10 percent of your travel budget as an emergency fund can provide extra protection.\n\n4. Find Ways to Reduce Costs\nLook for affordable options before making bookings. Compare prices for transportation and accommodation, check discounts, and consider traveling during less busy periods. You can also choose free or low-cost activities, such as visiting public parks or local markets.\n\n5. Set a Savings Target\nFinally, calculate how much you need to save each month before your travel. For example, if you need Rp3,000,000 in six months, you can set aside about Rp500,000 each month. Record your savings regularly and reduce unnecessary spending if you are falling behind.`;
+
+        const PASSAGE_BROMO = `Mount Bromo\n\nMount Bromo is one of the most well-known volcanoes in East Java. It is located in the Tengger Massif and rises about 2,329 meters above sea level. Although it is not the highest mountain in Indonesia, Mount Bromo is famous for its unusual landscape and beautiful views. Around the volcano is a wide area called the Sea of Sand, which is covered with dark volcanic sand and surrounded by several mountains.\n\nOne of the best times to see Mount Bromo is early in the morning from Mount Penanjakan. Before sunrise, the area is cold and often covered with mist. As the sun begins to rise, the mist slowly disappears and the mountains become easier to see. Mount Bromo has a large crater at its top and often releases white sulfur smoke into the air. Near it is Mount Batok, which has a steep surface with lines running down its sides. In the distance, Mount Semeru can also be seen behind the other mountains.\n\nThe view changes as the sun rises higher. The sky becomes brighter, and the mountains and Sea of Sand appear in shades of gold, orange, and pink. Visitors can walk across the Sea of Sand toward Mount Bromo's crater. The dark volcanic sand covers the ground, while the cool mountain air surrounds the area. A faint smell of sulfur can also be noticed near the crater. From some points along the path, visitors can see the wide volcanic landscape stretching across the Tengger Massif.`;
+
+        const PASSAGE_AI = `AI as a Tool for Better Education\n\nArtificial intelligence (AI) is now used in many schools. Some people worry that AI may make students depend too much on technology or reduce the role of teachers. However, AI can be a useful tool in education when it is used in the right way. It can help students learn better, give teachers more time, and support different learning needs.\n\nFirst, AI can make learning more personal. It can check students’ work and show which areas need more practice. It can also give quick feedback, so students can see their mistakes and fix them while learning. For example, an AI system may give a student extra questions about a topic that they find difficult. This support can help students learn at their own pace and become more active in class.\n\nSecond, AI can make lessons easier to access. Students do not all learn in the same way, and some may need extra support. Tools such as text-to-speech and speech recognition can help students use learning materials in different ways. AI can also create pictures or other visual materials to explain ideas that are hard to understand from words alone.\n\nFinally, AI can save teachers time. Teachers often spend many hours checking simple work, preparing activities, and organizing information. AI can help with some of these tasks. The saved time can be used to talk with students, explain difficult ideas, and give personal support.`;
+
+        const PASSAGE_CAT = `The Honorary Member of the Class\n\nSifa had always loved cats. Whenever she saw one on the street, she would stop for a moment to watch it. She often wished she could take every stray cat home, although she knew that was impossible.\n\nOne morning, while walking to school, Sifa noticed a small cat hiding beside a tree. Its fur was dirty, and it looked weak and hungry. Sifa looked around, but there was no owner nearby. Worried that the cat might be hurt, she decided to take it to school first and find a safer place for it later.\n\nSifa carefully put the cat inside her jacket. She hoped nobody would notice. However, before she could find a suitable place for it, the school bell rang. Her first class was about to begin, so she had no choice but to bring the cat into the classroom.\n\nFor a while, everything went well. Then, in the middle of the lesson, a soft “meow” came from Sifa’s jacket. The teacher stopped speaking and looked at her. “Sifa, what is that sound?” the teacher asked. Sifa slowly opened her jacket and showed the cat. The teacher was surprised and reminded her that animals were not allowed in the classroom. Before Sifa could explain, several classmates spoke up. They said the cat looked hungry and frightened and that Sifa had only brought it because she wanted to help. The teacher finally agreed to let the cat stay in a safe corner for the day. The students named it Lucky.\n\nOver the next few weeks, Lucky became a familiar sight at school. Students took turns giving it food and water. Even teachers began to enjoy seeing the cat during breaks. They noticed that students often returned to class feeling calmer after spending a few minutes with Lucky. By the end of the term, Lucky had earned a special title: an honorary member of the class.`;
+
+        const PASSAGE_RED_CROSS = `My Journey as a Red Cross Volunteer\n\nMy journey as a Philippine Red Cross volunteer began when I was still at school. My classmates and I were encouraged to join volunteer activities, and our first experience was on World CPR (Cardio-Pulmonary Resuscitation) Day. During the event, we learned basic CPR from young but skilled trainers. Impressed by their abilities, I decided to join volunteering myself.\n\nI soon learned that being a Red Cross volunteer required more than simply joining activities. Volunteers had to receive training and learn different skills. At first, volunteering seemed like a small effort, but it gradually became more challenging and meaningful.\n\nAfter volunteering at the Marikina chapter for some time, I was invited to join a deployment. My first deployment was during the eruption of Taal Volcano in Batangas where I was assigned to prepare hot meals for the victims. I did not know much about cooking at that time, but I learned that volunteers needed to be able to handle different tasks.\n\nI will never forget that deployment. The ashfall was so heavy that I had difficulty breathing. I was frightened and wondered whether I would return safely to my family. However, seeing people who needed help changed my focus. I began helping in evacuation centres and supporting families in different ways. I also spent time with children who had become frightened by repeated storms. To help them feel better, I organized simple activities such as singing and dancing.\n\nThrough these experiences, I became more confident and learned many new skills. I am proud of my time with the Red Cross and grateful to the mentors who supported me throughout my journey.`;
+
+        // DATA LENGKAP 30 SOAL PAKET 1
+        const questionsData = [
+  {
+    "id": 1,
+    "title": "The Legend of Mahakiya",
+    "passage": PASSAGE_MAHAKIYA,
+    "question": "Which of the following best summarizes the main sequence of events in the story?",
+    "options": {
+      "A": "Maria was loved by everybody in the village – When a band of bandits attacked the village, the villagers hid Maria in a bush – The villagers fought the bandits but they were defeated – When the bandits finally left, Maria’s parent looked for her – God had changed Maria into Mahakiya to protect her from the bandits.",
+      "B": "Maria was a cheerful girl who lived with her parent lived in a village – A band of bandits kidnapped her and hid her in a bush – Maria’s parent begged the bandits to let Maria go – Maria’s parent together with the bandits looked for Maria in the bush – Maria was not found because she had changed into “Mahakiya”.",
+      "C": "A group of bandits attacked the village where Maria and her parents lived – Maria’s father and mother hid Maria in thick bushes – Unable to find Maria, the bandits left – Maria’s parent could not find her and found a strange plant instead – Maria parent believed God had protected Maria and they named the plant “Mahakiya”.",
+      "D": "Maria’s parent always taught Maria gardening – One day a group of bandits raided the village where they lived – Maria’s parent hid her in thick bushes called Mahakiya – The bandits searched for Maria but they could not find her and left – Maria’s parent looked for Maria but only found a strange plant.",
+      "E": "The villagers asked Maria’s parent help to defeat a group of bandits – The bandits knocked Maria’s parent unconscious – When they woke up, they could not find Maria – After looking for quite a while, they found Maria had changed into a plant which people called Mahakiya."
+    },
+    "key": "C",
+    "pembahasan": "Pilihan C benar karena sesuai dengan urutan kejadian utama dalam cerita: Sekelompok bandit menyerang desa -> Ayah dan ibu Maria menyembunyikan Maria di semak-semak -> Karena tidak menemukan Maria, para bandit meninggalkan desa -> Orang tua Maria menemukan tumbuhan aneh -> Orang tua Maria percaya Tuhan telah menyelamatkan Maria, lalu menamakan tumbuhan tersebut Mahakiya."
+  },
+  {
+    "id": 2,
+    "title": "The Legend of Mahakiya",
+    "passage": PASSAGE_MAHAKIYA,
+    "question": "Based on the story, which of the following best represent the moral lessons of “The Legend of Mahakiya”? (There is more than one correct answer)",
+    "options": {
+      "A": "We should be more extrovert and talkative to be liked by other people.",
+      "B": "Parents may take difficult actions to protect their children from danger.",
+      "C": "People should always overcome their fears before helping their families.",
+      "D": "Sometimes we should stay away from everyone to avoid problems in life.",
+      "E": "A person's differences can sometimes become part of what makes them special."
+    },
+    "key": "B, E",
+    "pembahasan": "Pilihan B benar karena orang tua Maria mengambil keputusan sulit menyembunyikan anaknya dari bandit. Pilihan E benar karena karakter pemalu Maria justru menjadikannya sangat spesial hingga dijaga oleh Tuhan."
+  },
+  {
+    "id": 3,
+    "title": "The Legend of Mahakiya",
+    "passage": PASSAGE_MAHAKIYA,
+    "question": "How does the ending relate to description of Maria's character in the opening paragraph?",
+    "options": {
+      "A": "Maria's shyness is reflected in the plant's response when it is touched.",
+      "B": "Maria's love for flowers becomes connected to the plant she becomes.",
+      "C": "Maria's obedience relates to her transformation to a plant in the garden.",
+      "D": "Maria's lovable character is connected to the popularity of Mahakiya plant.",
+      "E": "Maria's kindness to her parents help her to change into a plant in her garden."
+    },
+    "key": "A",
+    "pembahasan": "Pilihan A benar karena daun tanaman Mahakiya yang menguncup saat disentuh mencerminkan sifat pemalu Maria di awal cerita."
+  },
+  {
+    "id": 4,
+    "title": "The Legend of Mahakiya",
+    "passage": PASSAGE_MAHAKIYA,
+    "question": "What possible ending is foreshadowed by the first two paragraphs of the story?",
+    "options": {
+      "A": "Maria will gradually become comfortable enough to greet the people around her.",
+      "B": "Maria will remain closely connected to her garden because it makes her feel safe.",
+      "C": "Maria will leave her home and discover that other people understand her shyness.",
+      "D": "Maria will overcome her shyness after realizing that her neighbors care about her.",
+      "E": "Maria will ask her parents to spend more time caring for her beloved flowers."
+    },
+    "key": "B",
+    "pembahasan": "Pilihan B benar karena dua paragraf pertama menekankan betapa Maria merasa aman di kebun bersama bunga-bunganya."
+  },
+  {
+    "id": 5,
+    "title": "The Legend of Mahakiya",
+    "passage": PASSAGE_MAHAKIYA,
+    "question": "Which of the following sentences from the text best describe of Maria’ character? (There is more than one correct answer)",
+    "options": {
+      "A": "She was dearly loved by her parents loved and people around her.",
+      "B": "\"I feel safe here with my flowers, Mother. They never judge my silence.\"",
+      "C": "They named the plant \"Makahiya\", “the Shy one”, and nurtured it with absolute care.",
+      "D": "She would rather stay at home or spend time in her garden to avoid being seen or being in a crowd.",
+      "E": "God had transformed their shy daughter into a plant in her beloved garden to save her from the bandits."
+    },
+    "key": "B, D",
+    "pembahasan": "Pilihan B dan D secara eksplisit menggambarkan sifat kepribadian Maria yang pemalu dan menyukai ketenangan."
+  },
+  {
+    "id": 6,
+    "title": "How to Plan and Save for a Budget-Friendly Trip",
+    "passage": PASSAGE_TRIP,
+    "question": "According to the text, why should we plan the budget in details before travelling?",
+    "options": {
+      "A": "To estimate the amount of money we need.",
+      "B": "To save money before we travel.",
+      "C": "To avoid unnecessary spending.",
+      "D": "To provide extra protection.",
+      "E": "To look for cheaper options."
+    },
+    "key": "C",
+    "pembahasan": "Sesuai paragraf poin 2: 'A detailed budget helps you avoid unnecessary spending' (C)."
+  },
+  {
+    "id": 7,
+    "title": "How to Plan and Save for a Budget-Friendly Trip",
+    "passage": PASSAGE_TRIP,
+    "question": "Decide whether each of the following statements belongs to 'Setting Travel Goal' or 'Making Budget Plan':\n1. Deciding the destination that we want to visit\n2. Deciding the activities that we want to do during the travel\n3. Checking the prices of hotels and train tickets\n4. Checking the entrance fees of the places we want to visit",
+    "options": {
+      "A": "1 & 2 = Setting Travel Goal; 3 & 4 = Making Budget Plan",
+      "B": "1 & 3 = Setting Travel Goal; 2 & 4 = Making Budget Plan",
+      "C": "2 & 3 = Setting Travel Goal; 1 & 4 = Making Budget Plan",
+      "D": "3 & 4 = Setting Travel Goal; 1 & 2 = Making Budget Plan",
+      "E": "All statements = Setting Travel Goal"
+    },
+    "key": "A",
+    "pembahasan": "Pernyataan 1 dan 2 termasuk 'Setting Travel Goal' (Langkah 1). Pernyataan 3 dan 4 termasuk 'Making Budget Plan' (Langkah 2)."
+  },
+  {
+    "id": 8,
+    "title": "How to Plan and Save for a Budget-Friendly Trip",
+    "passage": PASSAGE_TRIP,
+    "question": "Which of the following best represents the outline of steps of planning and saving for a budget-friendly trip?",
+    "options": {
+      "A": "Determining travel plans – estimating required costs – searching for discounts – setting emergency funds – calculating monthly savings.",
+      "B": "Selecting a destination – preparing extra funds – calculating expenses – comparing prices – setting monthly savings target.",
+      "C": "Deciding destination and activities – listing expected costs – planning monthly savings – looking for lower prices – preparing extra money.",
+      "D": "Establishing travel goal – estimating main expenses – preparing emergency funds – finding cost reduction – setting savings targets.",
+      "E": "Choosing travel locations – listing main costs – setting savings targets – looking for lower costs – preparing extra funds."
+    },
+    "key": "D",
+    "pembahasan": "Pilihan D secara tepat meringkas 5 langkah terurut sesuai judul sub-bab teks: Goal -> Expenses -> Emergency -> Cost Reduction -> Savings."
+  },
+  {
+    "id": 9,
+    "title": "How to Plan and Save for a Budget-Friendly Trip",
+    "passage": PASSAGE_TRIP,
+    "question": "Which statement best describes the author's main purpose in writing the text?",
+    "options": {
+      "A": "To persuade young people to travel more frequently.",
+      "B": "To explain why traveling has become expensive for young people.",
+      "C": "To compare different ways of managing money for a vacation.",
+      "D": "To show the importance of saving money for future travel.",
+      "E": "To guide readers on how to plan and save for an affordable trip."
+    },
+    "key": "E",
+    "pembahasan": "Teks berbentuk petunjuk praktis untuk memandu pembaca merencanakan liburan hemat (E)."
+  },
+  {
+    "id": 10,
+    "title": "How to Plan and Save for a Budget-Friendly Trip",
+    "passage": PASSAGE_TRIP,
+    "question": "Which of the following actions show the application of the recommended advice in the text? (There is more than one correct answer)",
+    "options": {
+      "A": "Reza decides on a three-day trip and identifies the places she wants to visit before estimating the money she will need.",
+      "B": "Dita uses most of the money she has saved for her vacation because she believes there will be much unexpected expenses.",
+      "C": "Before booking a hotel, Hasna checks several accommodation prices and chooses a less expensive option that meets his needs.",
+      "D": "Bima plans to travel in six months and he intends to get the fund from bonuses he may receive from his office shortly before the trip.",
+      "E": "Before her trip, Farrell puts some of her travel money aside so that she can deal with emergency costs that may arise during the travel."
+    },
+    "key": "A, C, E",
+    "pembahasan": "Pilihan A, C, dan E adalah penerapan yang direkomendasikan dalam teks."
+  },
+  {
+    "id": 11,
+    "title": "Mount Bromo",
+    "passage": PASSAGE_BROMO,
+    "question": "Based on the text, decide whether each of the following objects is 'Described' or 'Mentioned':\n1. The location of Mount Bromo\n2. The view from Mount Panjanjakan\n3. White sulfur smoke at Mount Bromo’s summit\n4. The sulfuric smell around the Sea of sand",
+    "options": {
+      "A": "1 & 3 = Described; 2 & 4 = Mentioned",
+      "B": "1 & 2 = Described; 3 & 4 = Mentioned",
+      "C": "2 & 4 = Described; 1 & 3 = Mentioned",
+      "D": "3 & 4 = Described; 1 & 2 = Mentioned",
+      "E": "All objects are Described"
+    },
+    "key": "B",
+    "pembahasan": "1 & 2 dideskripsikan secara rinci (Described). 3 & 4 hanya disebutkan sepintas (Mentioned)."
+  },
+  {
+    "id": 12,
+    "title": "Mount Bromo",
+    "passage": PASSAGE_BROMO,
+    "question": "What does the phrase “shades of gold, orange, and pink” in paragraph 3 describe?",
+    "options": {
+      "A": "The colors of the sulfur smoke above Mount Bromo.",
+      "B": "The changing colors of the landscape as the sun rises.",
+      "C": "The reflection of sunlight on the volcanic sand.",
+      "D": "The appearance of the sky before sunrise.",
+      "E": "The colorful flowers near Mount Bromo."
+    },
+    "key": "B",
+    "pembahasan": "Frasa tersebut menggambarkan perubahan warna pemandangan lanskap saat matahari terbit (B)."
+  },
+  {
+    "id": 13,
+    "title": "Mount Bromo",
+    "passage": PASSAGE_BROMO,
+    "question": "Which of the following statements best summarizes the main topic of the passage?",
+    "options": {
+      "A": "The highest volcanic peaks located in East Java.",
+      "B": "The distinctive features and scenery of Mount Bromo.",
+      "C": "The history of volcanic eruptions in Tengger Massif.",
+      "D": "The tourist activities available around Mount Bromo.",
+      "E": "The geographical formation of Mount Penanjakan."
+    },
+    "key": "B",
+    "pembahasan": "Topik utama teks adalah keunikan fitur dan pemandangan Gunung Bromo (B)."
+  },
+  {
+    "id": 14,
+    "title": "Mount Bromo",
+    "passage": PASSAGE_BROMO,
+    "question": "What additional information would make the description of sulfuric smell more informative?",
+    "options": {
+      "A": "A list of other mountains in East Java.",
+      "B": "An explanation of how sunrise affects the weather.",
+      "C": "Details on its intensity and potential health effects.",
+      "D": "The exact height of Mount Batok and Mount Semeru.",
+      "E": "The ticket prices for entering Bromo Tengger Park."
+    },
+    "key": "C",
+    "pembahasan": "Informasi tingkat intensitas bau belerang dan dampaknya bagi kesehatan akan membuat deskripsi lebih informatif (C)."
+  },
+  {
+    "id": 15,
+    "title": "Mount Bromo",
+    "passage": PASSAGE_BROMO,
+    "question": "Which of the following statements best reflect the author's overall evaluation of Mount Bromo?",
+    "options": {
+      "A": "It is dangerous due to frequent sulfur emissions.",
+      "B": "It is difficult to reach due to cold weather and mist.",
+      "C": "It is less attractive than other higher mountains in Indonesia.",
+      "D": "It offers a unique and memorable volcanic landscape.",
+      "E": "It is only worth visiting during the early morning hours."
+    },
+    "key": "D",
+    "pembahasan": "Penulis mengagumi Bromo sebagai lanskap vulkanik yang unik dan berkesan (D)."
+  },
+  {
+    "id": 16,
+    "title": "AI as a Tool for Better Education",
+    "passage": PASSAGE_AI,
+    "question": "Categorize each of the following statements whether it belongs to the benefits of Artificial Intelligence (AI) 'For Students' or 'For Teachers':\n1. Finding topic for discussion\n2. Fixing mistakes while learning\n3. Preparing learning materials\n4. Helping to understand difficult ideas",
+    "options": {
+      "A": "1 & 3 = For Students; 2 & 4 = For Teachers",
+      "B": "2 & 4 = For Students; 1 & 3 = For Teachers",
+      "C": "1 & 2 = For Students; 3 & 4 = For Teachers",
+      "D": "3 & 4 = For Students; 1 & 2 = For Teachers",
+      "E": "All statements = For Students"
+    },
+    "key": "B",
+    "pembahasan": "Pernyataan 2 & 4 adalah manfaat untuk Siswa. Pernyataan 1 & 3 adalah manfaat untuk Guru."
+  },
+  {
+    "id": 17,
+    "title": "AI as a Tool for Better Education",
+    "passage": PASSAGE_AI,
+    "question": "What can be inferred about the author's view on AI from the text?",
+    "options": {
+      "A": "AI should replace traditional classroom teachers.",
+      "B": "AI will make human teachers completely unnecessary.",
+      "C": "AI usage in schools should be banned due to high risks.",
+      "D": "AI is a valuable supporting tool when used responsibly.",
+      "E": "AI is only useful for science and math subjects."
+    },
+    "key": "D",
+    "pembahasan": "Penulis mendukung penggunaan AI sebagai alat bantu pendukung jika digunakan secara bertanggung jawab (D)."
+  },
+  {
+    "id": 18,
+    "title": "AI as a Tool for Better Education",
+    "passage": PASSAGE_AI,
+    "question": "What can be inferred from the benefits of Artificial Intelligence (AI) for students?",
+    "options": {
+      "A": "Students no longer need to study at school.",
+      "B": "AI completes all homework automatically for students.",
+      "C": "Students can receive personalized feedback and learn at their own pace.",
+      "D": "AI guarantees perfect exam scores for all students.",
+      "E": "Students will lose the ability to think critically."
+    },
+    "key": "C",
+    "pembahasan": "AI memungkinkan siswa belajar sesuai kecepatan sendiri dan mendapat umpan balik personal (C)."
+  },
+  {
+    "id": 19,
+    "title": "AI as a Tool for Better Education",
+    "passage": PASSAGE_AI,
+    "question": "What fact can be added to make argument about benefit of AI in providing students easier access learning material stronger?",
+    "options": {
+      "A": "AI software is often expensive for schools to buy.",
+      "B": "Some students prefer printed books over screens.",
+      "C": "Teachers need training to use AI effectively.",
+      "D": "AI features like instant translation help non-native language speakers.",
+      "E": "Internet connection is required to run AI tools."
+    },
+    "key": "D",
+    "pembahasan": "Fitur penerjemahan bahasa secara instan memperkuat argumen tentang kemudahan akses bahan belajar (D)."
+  },
+  {
+    "id": 20,
+    "title": "AI as a Tool for Better Education",
+    "passage": PASSAGE_AI,
+    "question": "How does the author support his opinion that AI can improve education when used appropriately?",
+    "options": {
+      "A": "By presenting statistical data and financial costs of AI.",
+      "B": "By explaining specific benefits for both students and teachers.",
+      "C": "By interviewing school principals and students.",
+      "D": "By comparing AI usage in different countries.",
+      "E": "By criticizing teachers who avoid using technology."
+    },
+    "key": "B",
+    "pembahasan": "Penulis mendukung opininya dengan menguraikan manfaat spesifik bagi siswa dan guru (B)."
+  },
+  {
+    "id": 21,
+    "title": "The Honorary Member of the Class",
+    "passage": PASSAGE_CAT,
+    "question": "Which of the following statements best synthesizes the sequence of events in the story?",
+    "options": {
+      "A": "Sifa brought a cat to school secretly – The cat escaped – The teacher punished the class – Lucky was sent to an animal shelter.",
+      "B": "Sifa found a sick cat – She took it home – Her parents allowed her to keep it – Lucky became a family pet.",
+      "C": "Sifa rescued a stray cat and brought it to class – Classmates supported her – The teacher allowed it to stay – Lucky became the class honorary member.",
+      "D": "The teacher found a cat outside – The school adopted it – Students ignored the cat – Lucky left the school.",
+      "E": "Classmates bought a cat for Sifa – They hid it from the teacher – The principal found out – The cat was removed."
+    },
+    "key": "C",
+    "pembahasan": "Pilihan C meringkas urutan alur cerita dengan lengkap dan tepat."
+  },
+  {
+    "id": 22,
+    "title": "The Honorary Member of the Class",
+    "passage": PASSAGE_CAT,
+    "question": "What moral messages can be learned from the story? (There is more than one answer)",
+    "options": {
+      "A": "Showing care and kindness can help bring people together.",
+      "B": "Rules should always be ignored when someone needs help.",
+      "C": "Helping a creature in need can bring positive changes to others.",
+      "D": "Small acts of kindness can have meaningful effects on a community.",
+      "E": "People should be careful with stray for animals as they may be dangerous."
+    },
+    "key": "A, C, D",
+    "pembahasan": "Kebaikan kecil menyatukan kelas (A), empati menyelesaikan masalah (C), dan merawat hewan menciptakan suasana positif (D)."
+  },
+  {
+    "id": 23,
+    "title": "The Honorary Member of the Class",
+    "passage": PASSAGE_CAT,
+    "question": "Categorize each of the following statements whether it indicates an 'Action' or an 'Effect' in the story:\n1. Sifa saw a stray cat and brought it to class\n2. Students took turn feeding and taking care of Lucky\n3. The teacher discovered the cat and warned Sifa\n4. Lucky became familiar with students",
+    "options": {
+      "A": "1 & 3 = Action; 2 & 4 = Effect",
+      "B": "3 & 4 = Action; 1 & 2 = Effect",
+      "C": "1 & 2 = Action; 3 & 4 = Effect",
+      "D": "2 & 3 = Action; 1 & 4 = Effect",
+      "E": "All statements = Action"
+    },
+    "key": "C",
+    "pembahasan": "1 & 2 adalah Tindakan (Action). 3 & 4 adalah Akibat/Dampak (Effect)."
+  },
+  {
+    "id": 24,
+    "title": "The Honorary Member of the Class",
+    "passage": PASSAGE_CAT,
+    "question": "Based on the events in the story, which outcome is most likely to happen as Lucky continues to stay at school?",
+    "options": {
+      "A": "The teacher will ban Lucky from entering the school.",
+      "B": "Students will continue to feel calmer and more united.",
+      "C": "Sifa will stop caring for Lucky.",
+      "D": "The school will start an animal training center.",
+      "E": "Students will neglect their schoolwork completely."
+    },
+    "key": "B",
+    "pembahasan": "Keberadaan Lucky terbukti membuat siswa lebih tenang dan kompak (B)."
+  },
+  {
+    "id": 25,
+    "title": "The Honorary Member of the Class",
+    "passage": PASSAGE_CAT,
+    "question": "Which of the following sentences from the text best describes Sifa’s action that reflects her character as a caring person?",
+    "options": {
+      "A": "Sifa had always loved cats.",
+      "B": "Worried that the cat might be hurt, she decided to take it to school first.",
+      "C": "Her first class was about to begin.",
+      "D": "Sifa slowly opened her jacket and showed the cat.",
+      "E": "Lucky had earned a special title."
+    },
+    "key": "B",
+    "pembahasan": "Kalimat B menunjukkan kepedulian Sifa menyelamatkan kucing."
+  },
+  {
+    "id": 26,
+    "title": "My Journey as a Red Cross Volunteer",
+    "passage": PASSAGE_RED_CROSS,
+    "question": "According to the text, what inspired the writer to finally join volunteering?",
+    "options": {
+      "A": "The invitation from the school principal.",
+      "B": "The impressive skills of the young CPR trainers.",
+      "C": "The disaster eruption of Taal Volcano.",
+      "D": "The desire to travel to different places.",
+      "E": "The financial rewards offered by Red Cross."
+    },
+    "key": "B",
+    "pembahasan": "Penulis terinspirasi oleh keahlian para pelatih CPR muda di World CPR Day (B)."
+  },
+  {
+    "id": 27,
+    "title": "My Journey as a Red Cross Volunteer",
+    "passage": PASSAGE_RED_CROSS,
+    "question": "Based on its content and the description of events, who is likely the target reader of the text?",
+    "options": {
+      "A": "Experienced volunteers who organize programs.",
+      "B": "Disaster relief professionals writing official reports.",
+      "C": "Active Red Cross mentors seeking guidelines.",
+      "D": "Young people who are looking for inspiration to start joining volunteering.",
+      "E": "Students who want to pursue a professional career in medical emergency."
+    },
+    "key": "D",
+    "pembahasan": "Teks ditujukan untuk menginspirasi anak-anak muda agar tertarik menjadi relawan (D)."
+  },
+  {
+    "id": 28,
+    "title": "My Journey as a Red Cross Volunteer",
+    "passage": PASSAGE_RED_CROSS,
+    "question": "Based on the information in the text, determine whether the following statements signify 'Challenge' or 'Lesson' that the writer experienced:\n1. I spent time with children who had become frightened by repeated storms\n2. The ashfall was so heavy that I had difficulty breathing\n3. Their happiness made me realize that helping people was not only about providing food and supplies\n4. I soon learned that being a Red Cross volunteer required more than simply joining activities",
+    "options": {
+      "A": "1 & 2 = Challenge; 3 & 4 = Lesson",
+      "B": "3 & 4 = Challenge; 1 & 2 = Lesson",
+      "C": "1 & 3 = Challenge; 2 & 4 = Lesson",
+      "D": "2 & 4 = Challenge; 1 & 3 = Lesson",
+      "E": "All statements = Lesson"
+    },
+    "key": "A",
+    "pembahasan": "Pernyataan 1 & 2 adalah Tantangan (Challenge). Pernyataan 3 & 4 adalah Pelajaran Berharga (Lesson)."
+  },
+  {
+    "id": 29,
+    "title": "My Journey as a Red Cross Volunteer",
+    "passage": PASSAGE_RED_CROSS,
+    "question": "Which of the following real-life situations related to volunteering could realistically happen based on the events described in the text? (There is more than one answer)",
+    "options": {
+      "A": "A new volunteer experiences physical and emotional challenges in a disaster area.",
+      "B": "A volunteer finds out that simple games do not help children at all.",
+      "C": "Students who join a Red Cross program never participate again after graduating.",
+      "D": "A volunteer realizes that volunteering also involves providing emotional support.",
+      "E": "Volunteers only focus on getting public praise."
+    },
+    "key": "A, D",
+    "pembahasan": "A dan D menggambarkan situasi nyata yang sesuai dengan alur cerita relawan."
+  },
+  {
+    "id": 30,
+    "title": "My Journey as a Red Cross Volunteer",
+    "passage": PASSAGE_RED_CROSS,
+    "question": "Which of the following feelings best captures the writer’s emotional response to the experience of being a volunteer?",
+    "options": {
+      "A": "Regret and exhaustion.",
+      "B": "Confusion and anxiety.",
+      "C": "Indifference and boredom.",
+      "D": "Jealousy and anger.",
+      "E": "Pride and gratitude."
+    },
+    "key": "E",
+    "pembahasan": "Sesuai paragraf terakhir: 'I am proud of my time with the Red Cross and grateful...' (E)."
+  }
+];
+
+        // State Aplikasi CBT
+        let currentIdx = 0;
+        let userFullname = localStorage.getItem('cbt_user_fullname') || "";
+        let userSchool = localStorage.getItem('cbt_user_school') || "";
+        let userAnswers = JSON.parse(localStorage.getItem('cbt_answers')) || {};
+        let flaggedQuestions = JSON.parse(localStorage.getItem('cbt_flags')) || {};
+        let totalSeconds = parseInt(localStorage.getItem('cbt_timer')) || (45 * 60); // 45 Menit = 2700 Detik
+        let timerInterval;
+
+        function startExamWithCredentials(e) {
+            e.preventDefault();
+            const nameInput = document.getElementById('user-fullname').value.trim();
+            const schoolInput = document.getElementById('user-school').value.trim();
+
+            if (!nameInput || !schoolInput) {
+                alert("Mohon isi Nama Lengkap dan Asal Sekolah.");
+                return;
+            }
+
+            userFullname = nameInput;
+            userSchool = schoolInput;
+
+            localStorage.setItem('cbt_user_fullname', userFullname);
+            localStorage.setItem('cbt_user_school', userSchool);
+
+            document.getElementById('login-modal').style.display = 'none';
+            initExamUI();
+        }
+
+        function checkUserLogin() {
+            if (userFullname && userSchool) {
+                document.getElementById('login-modal').style.display = 'none';
+                initExamUI();
+            } else {
+                document.getElementById('login-modal').style.display = 'flex';
+            }
+        }
+
+        function initExamUI() {
+            document.getElementById('display-fullname').textContent = userFullname;
+            document.getElementById('display-school').textContent = userSchool;
+
+            renderGrid();
+            loadQuestion(currentIdx);
+            startTimer();
+            updateAnsweredBadge();
+        }
+
+        function setFontSize(size) {
+            document.body.style.fontSize = size;
+            document.querySelectorAll('.btn-size').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        function startTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                totalSeconds--;
+                localStorage.setItem('cbt_timer', totalSeconds);
+                if (totalSeconds <= 0) {
+                    clearInterval(timerInterval);
+                    autoSubmit();
+                }
+                updateTimerDisplay();
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const h = Math.floor(totalSeconds / 3600).toString().padStart(2, '0');
+            const m = Math.floor((totalSeconds % 3600) / 60).toString().padStart(2, '0');
+            const s = (totalSeconds % 60).toString().padStart(2, '0');
+            
+            document.getElementById('timer-display').textContent = `${h}:${m}:${s}`;
+
+            const timerBox = document.getElementById('timer-box');
+            if (totalSeconds < 300) { // < 5 menit
+                timerBox.className = 'timer-box danger';
+            } else if (totalSeconds < 600) { // < 10 menit
+                timerBox.className = 'timer-box warning';
+            }
+        }
+
+        function renderGrid() {
+            const gridContainer = document.getElementById('question-grid');
+            gridContainer.innerHTML = '';
+
+            questionsData.forEach((q, idx) => {
+                const item = document.createElement('div');
+                item.className = 'grid-item';
+                item.textContent = q.id;
+
+                if (idx === currentIdx) item.classList.add('active');
+                if (flaggedQuestions[q.id]) {
+                    item.classList.add('flagged');
+                } else if (userAnswers[q.id] && userAnswers[q.id].length > 0) {
+                    item.classList.add('answered');
+                }
+
+                item.onclick = () => {
+                    currentIdx = idx;
+                    loadQuestion(currentIdx);
+                    renderGrid();
+                };
+
+                gridContainer.appendChild(item);
+            });
+        }
+
+        function loadQuestion(idx) {
+            const q = questionsData[idx];
+
+            document.getElementById('passage-title').textContent = q.title;
+            document.getElementById('passage-content').textContent = q.passage;
+            document.getElementById('question-number-text').textContent = `Soal Nomor ${q.id}`;
+            document.getElementById('question-text').textContent = q.question;
+
+            const isMulti = q.key.includes(',');
+            document.getElementById('question-type-badge').textContent = isMulti ? 'Pilihan Ganda Kompleks' : 'Pilihan Ganda';
+
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+
+            const currentAns = userAnswers[q.id] || [];
+
+            Object.keys(q.options).forEach(key => {
+                const optItem = document.createElement('div');
+                optItem.className = 'option-item';
+                if (currentAns.includes(key)) optItem.classList.add('selected');
+
+                const inputType = isMulti ? 'checkbox' : 'radio';
+
+                optItem.innerHTML = `
+                    <input type="${inputType}" name="option" value="${key}" ${currentAns.includes(key) ? 'checked' : ''}>
+                    <div class="option-label"><strong>${key}.</strong> ${q.options[key]}</div>
+                `;
+
+                optItem.onclick = (e) => {
+                    if (isMulti) {
+                        if (userAnswers[q.id]?.includes(key)) {
+                            userAnswers[q.id] = userAnswers[q.id].filter(k => k !== key);
+                        } else {
+                            userAnswers[q.id] = [...(userAnswers[q.id] || []), key];
+                        }
+                    } else {
+                        userAnswers[q.id] = [key];
+                    }
+                    localStorage.setItem('cbt_answers', JSON.stringify(userAnswers));
+                    loadQuestion(currentIdx);
+                    renderGrid();
+                    updateAnsweredBadge();
+                };
+
+                optionsContainer.appendChild(optItem);
+            });
+
+            document.getElementById('btn-prev').disabled = (idx === 0);
+            document.getElementById('btn-next').disabled = (idx === questionsData.length - 1);
+
+            const flagBtn = document.getElementById('btn-flag');
+            if (flaggedQuestions[q.id]) {
+                flagBtn.style.opacity = '0.8';
+                flagBtn.textContent = 'Ragu-Ragu (Aktif)';
+            } else {
+                flagBtn.style.opacity = '1';
+                flagBtn.textContent = 'Ragu-Ragu';
+            }
+        }
+
+        function updateAnsweredBadge() {
+            let count = Object.keys(userAnswers).filter(k => userAnswers[k].length > 0).length;
+            document.getElementById('answered-count-badge').textContent = `${count}/30`;
+        }
+
+        function prevQuestion() {
+            if (currentIdx > 0) {
+                currentIdx--;
+                loadQuestion(currentIdx);
+                renderGrid();
+            }
+        }
+
+        function nextQuestion() {
+            if (currentIdx < questionsData.length - 1) {
+                currentIdx++;
+                loadQuestion(currentIdx);
+                renderGrid();
+            }
+        }
+
+        function toggleFlag() {
+            const qId = questionsData[currentIdx].id;
+            flaggedQuestions[qId] = !flaggedQuestions[qId];
+            localStorage.setItem('cbt_flags', JSON.stringify(flaggedQuestions));
+            loadQuestion(currentIdx);
+            renderGrid();
+        }
+
+        function confirmSubmit() {
+            let answered = Object.keys(userAnswers).filter(k => userAnswers[k].length > 0).length;
+            if (confirm(`Anda telah menjawab ${answered} dari 30 soal. Yakin ingin menyelesaikan ujian?`)) {
+                finishExam();
+            }
+        }
+
+        function autoSubmit() {
+            alert("Waktu pengerjaan ujian (45 menit) telah habis! Jawaban Anda otomatis terselesaikan dan dikirim.");
+            finishExam();
+        }
+
+        function finishExam() {
+            clearInterval(timerInterval);
+
+            let correct = 0;
+            const reviewContainer = document.getElementById('review-container');
+            reviewContainer.innerHTML = '';
+
+            const resultPayload = {
+                timestamp: new Date().toLocaleString('id-ID'),
+                fullname: userFullname,
+                school: userSchool,
+                answers: {}
+            };
+
+            questionsData.forEach(q => {
+                const userAnsList = (userAnswers[q.id] || []).sort();
+                const userAnsStr = userAnsList.join(', ');
+                const isCorrect = (userAnsStr === q.key);
+
+                if (isCorrect) correct++;
+                resultPayload.answers[`Soal_${q.id}`] = userAnsStr || "Kosong";
+
+                const reviewItem = document.createElement('div');
+                reviewItem.className = `review-item ${isCorrect ? 'correct' : 'incorrect'}`;
+                
+                reviewItem.innerHTML = `
+                    <div style="font-weight: 700; margin-bottom: 6px;">
+                        Soal Nomor ${q.id}
+                        <span class="status-tag ${isCorrect ? 'correct' : 'incorrect'}">${isCorrect ? 'BENAR' : 'SALAH'}</span>
+                    </div>
+                    <div style="margin-bottom: 8px;"><strong>Pertanyaan:</strong> ${q.question}</div>
+                    <div style="font-size: 0.9rem;"><strong>Jawaban Anda:</strong> ${userAnsStr || 'Tidak Dijawab'}</div>
+                    <div style="font-size: 0.9rem; color: var(--success); font-weight: 600;"><strong>Kunci Jawaban:</strong> ${q.key}</div>
+                    <div class="explanation-box">
+                        <strong>Pembahasan:</strong> ${q.pembahasan}
+                    </div>
+                `;
+
+                reviewContainer.appendChild(reviewItem);
+            });
+
+            const score = Math.round((correct / questionsData.length) * 100);
+            resultPayload.score = score;
+            resultPayload.correct = correct;
+            resultPayload.incorrect = questionsData.length - correct;
+
+            const timeSpentSec = (45 * 60) - totalSeconds;
+            const h = Math.floor(timeSpentSec / 3600).toString().padStart(2, '0');
+            const m = Math.floor((timeSpentSec % 3600) / 60).toString().padStart(2, '0');
+            const s = (timeSpentSec % 60).toString().padStart(2, '0');
+            const timeUsedStr = `${h}:${m}:${s}`;
+            resultPayload.timeUsed = timeUsedStr;
+
+            document.getElementById('final-score').textContent = score;
+            document.getElementById('correct-count').textContent = correct;
+            document.getElementById('incorrect-count').textContent = questionsData.length - correct;
+            document.getElementById('result-fullname').textContent = userFullname;
+            document.getElementById('result-school').textContent = userSchool;
+            document.getElementById('time-used').textContent = timeUsedStr;
+
+            document.getElementById('result-modal').style.display = 'flex';
+
+            // Mengirim data otomatis ke Google Apps Script Web App (Metode text/plain yang Lolos CORS di HP/Browser)
+            if (GOOGLE_APPS_SCRIPT_URL) {
+                fetch(GOOGLE_APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(resultPayload)
+                }).catch(err => console.log('Error pengiriman data otomatis:', err));
+            }
+        }
+
+        function downloadSpreadsheetCSV() {
+            let csvContent = "data:text/csv;charset=utf-8,";
+            
+            let headers = ["Waktu Submit", "Nama Lengkap", "Asal Sekolah", "Skor Akhir", "Jumlah Benar", "Jumlah Salah", "Waktu Pengerjaan"];
+            for (let i = 1; i <= 30; i++) {
+                headers.push(`Soal ${i}`);
+            }
+            csvContent += headers.map(h => `"${h}"`).join(",") + "\n";
+
+            let row = [
+                new Date().toLocaleString('id-ID'),
+                userFullname,
+                userSchool,
+                document.getElementById('final-score').textContent,
+                document.getElementById('correct-count').textContent,
+                document.getElementById('incorrect-count').textContent,
+                document.getElementById('time-used').textContent
+            ];
+
+            for (let i = 1; i <= 30; i++) {
+                let ans = (userAnswers[i] || []).sort().join(', ');
+                row.push(ans || "Kosong");
+            }
+
+            csvContent += row.map(r => `"${r}"`).join(",") + "\n";
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `Hasil_TKAD_${userFullname.replace(/\s+/g, '_')}_${userSchool.replace(/\s+/g, '_')}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function resetExam() {
+            if (confirm("Mulai ulang ujian? Seluruh data pengerjaan akan direset.")) {
+                localStorage.removeItem('cbt_answers');
+                localStorage.removeItem('cbt_flags');
+                localStorage.removeItem('cbt_timer');
+                localStorage.removeItem('cbt_user_fullname');
+                localStorage.removeItem('cbt_user_school');
+                location.reload();
+            }
+        }
+
+        window.onload = checkUserLogin;
+    </script>
+</body>
+</html>
